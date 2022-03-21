@@ -12,5 +12,5 @@ $ pip install -r requirements.txt
 ```
 3. Run script
 ```Command
-$ python3 TA_Project.py
+$ python3 main.py
 ```
