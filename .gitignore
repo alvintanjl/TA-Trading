@@ -1,2 +1,4 @@
 *.html
+*.csv
+*.npz
 secrets.json
