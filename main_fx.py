@@ -212,7 +212,9 @@ working_dataset['win'] = working_dataset['ret'] > 0
 
 # Reverse dataset, then calculate win rate
 reversed_dataset = working_dataset.iloc[::-1]
-reversed_dataset['win_rate_20m'] = reversed_dataset['win'].rolling(4).mean()
+
+win_rate_col_nm = 'win_rate_30m'
+reversed_dataset[win_rate_col_nm] = reversed_dataset['win'].rolling(6).mean()
 working_dataset = reversed_dataset.iloc[::-1]
 
 working_dataset = working_dataset.dropna()
@@ -220,11 +222,11 @@ working_dataset
 
 # %%
 plt.figure(figsize = (15,8))
-working_dataset['win_rate_20m'][-100:].plot()
+working_dataset[win_rate_col_nm][-100:].plot()
 plt.show()
 
 # %% Get MSE by predicting all 0.5 win rate (number to beat for model to be meaningful)
-working_dataset['win_rate_20m'].apply(lambda x: (x - 0.5) ** 2).mean()
+working_dataset[win_rate_col_nm].apply(lambda x: (x - 0.5) ** 2).mean()
 
 # %% Specify column names
 x_columns_to_scale = [
@@ -245,7 +247,7 @@ x_columns_scaled = [
   'CS_thrusting'
 ]
     
-y_column = 'win_rate_20m'
+y_column = win_rate_col_nm
 
 # %% Scale and create features and target
 sc = StandardScaler()
@@ -305,3 +307,9 @@ np.savez_compressed('y_test.npz', y_test)
 test = np.load('X_train.npz')['arr_0']
 print(test)
 test
+
+#%% Get % of positives
+(y_train >= 0.75).mean()
+# (y_test >= 0.75).mean()
+
+# %%
