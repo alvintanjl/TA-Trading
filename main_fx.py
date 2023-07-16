@@ -143,28 +143,36 @@ fig.show()
 df['RSI'] = ta.momentum.RSIIndicator(df['close'], window = 14).rsi()
 
 # Bollinger Band
-bol = ta.volatility.BollingerBands(df['close'], window = 14)
-df['bol_upper'] = bol.bollinger_hband()
-df['bol_middle'] = bol.bollinger_mavg() 
-df['bol_lower'] = bol.bollinger_lband()
+# bol = ta.volatility.BollingerBands(df['close'], window = 14)
+# df['bol_upper'] = bol.bollinger_hband()
+# df['bol_middle'] = bol.bollinger_mavg() 
+# df['bol_lower'] = bol.bollinger_lband()
+
+# MACD
+# MACD = ema_26 - ema_12
+# Signal = MACD - ema_9
+# Hist = MACD - Signal
+macd, signal, hist = talib.MACD(df['close'], fastperiod=12, slowperiod=26, signalperiod=9)
+df['MACD_hist'] = hist
 
 # SMA
-df['SMA_l_200'] = ta.trend.SMAIndicator(df['low'], window = 200).sma_indicator()
-df['SMA_h_200'] = ta.trend.SMAIndicator(df['high'], window = 200).sma_indicator()
-df['hlc3'] = (df['high'] + df['low'] + df['close'])/3
-df['SMA_hlc3_200'] = ta.trend.SMAIndicator(df['hlc3'], window = 200).sma_indicator()
+# df['SMA_l_200'] = ta.trend.SMAIndicator(df['low'], window = 200).sma_indicator()
+# df['SMA_h_200'] = ta.trend.SMAIndicator(df['high'], window = 200).sma_indicator()
+# df['hlc3'] = (df['high'] + df['low'] + df['close'])/3
+# hlc = (df['high'] + df['low'] + df['close'])/3
+# df['SMA_hlc3_200'] = ta.trend.SMAIndicator(hlc, window = 200).sma_indicator()
 
 # EMA
-df['EMA_h_10'] = ta.trend.ema_indicator(df['high'], window = 10)
-df['EMA_l_10'] = ta.trend.ema_indicator(df['low'], window = 10)
-df['EMA_hlc3_10'] = ta.trend.ema_indicator(df['hlc3'], window = 10)
+# df['EMA_h_10'] = ta.trend.ema_indicator(df['high'], window = 10)
+# df['EMA_l_10'] = ta.trend.ema_indicator(df['low'], window = 10)
+# hlc = (df['high'] + df['low'] + df['close'])/3
+# df['EMA_hlc3_10'] = ta.trend.ema_indicator(hlc, window = 10)
 
 # EMA for close
-df['EMA_c_15'] = ta.trend.ema_indicator(df['close'], window = 15)
-df['EMA_c_20'] = ta.trend.ema_indicator(df['close'], window = 20)
-df['EMA_c_100'] = ta.trend.ema_indicator(df['close'], window = 100)
-df['EMA_c_150'] = ta.trend.ema_indicator(df['close'], window = 150)
-df['EMA_c_15'] = ta.trend.ema_indicator(df['close'], window = 15)
+# df['EMA_c_15'] = ta.trend.ema_indicator(df['close'], window = 15)
+# df['EMA_c_20'] = ta.trend.ema_indicator(df['close'], window = 20)
+# df['EMA_c_100'] = ta.trend.ema_indicator(df['close'], window = 100)
+# df['EMA_c_150'] = ta.trend.ema_indicator(df['close'], window = 150)
 
 # # Open - Close
 # df['c_minus_o'] = df['close'] - df['open']
@@ -230,10 +238,11 @@ working_dataset[win_rate_col_nm].apply(lambda x: (x - 0.5) ** 2).mean()
 
 # %% Specify column names
 x_columns_to_scale = [
-  'volume', 'RSI', 'bol_upper', 'bol_middle',
-  'bol_lower', 'SMA_l_200', 'SMA_h_200', 'hlc3', 'SMA_hlc3_200',
-  'EMA_h_10', 'EMA_l_10', 'EMA_hlc3_10', 'EMA_c_15', 'EMA_c_20',
-  'EMA_c_100', 'EMA_c_150'
+  # 'volume', 'RSI', 'bol_upper', 'bol_middle',
+  # 'bol_lower', 'SMA_l_200', 'SMA_h_200', 'hlc3', 'SMA_hlc3_200',
+  # 'EMA_h_10', 'EMA_l_10', 'EMA_hlc3_10', 'EMA_c_15', 'EMA_c_20',
+  # 'EMA_c_100', 'EMA_c_150'
+  'RSI', 'MACD_hist'
 ]
 
 x_columns_scaled = [
@@ -282,7 +291,7 @@ print(X_full.shape)
 # %% Train test spliit
 num_rows = len(X_full)
 
-train_last_row = int(num_rows * 0.6)
+train_last_row = int(num_rows * 0.7)
 
 X_train = np.array(X_full[:train_last_row])
 y_train = np.array(y_full[:train_last_row])
